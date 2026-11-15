@@ -1,0 +1,486 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090909">
+<title>Fire Box</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+ --orange:#ff6900;--gold:#ffad42;
+ --bg:#090909;--card:#171717;
+}
+body{
+ font-family:Arial,sans-serif;
+ background:var(--bg);color:white;
+ min-height:100vh;
+}
+header{
+ padding:18px 6%;display:flex;
+ justify-content:space-between;align-items:center;
+ background:#101010;border-bottom:1px solid #38251a;
+ position:sticky;top:0;z-index:10;
+}
+.logo{color:var(--orange);font-size:23px;font-weight:900}
+.tag{font-size:10px;color:#aaa}
+main{max-width:950px;margin:auto;padding:25px 18px 100px}
+.page{display:none;animation:show .25s ease}
+.page.active{display:block}
+@keyframes show{from{opacity:0}to{opacity:1}}
+.hero{
+ padding:45px 15px;text-align:center;
+ background:radial-gradient(circle,#451c05,#15100c 70%);
+ border:1px solid #422514;border-radius:18px;
+ margin-bottom:25px;
+}
+.hero h1{font-size:46px;color:var(--orange);margin-bottom:12px}
+.hero p{color:#bbb;line-height:1.7}
+.heading{font-size:23px;margin:25px 0 15px}
+.heading span{color:var(--orange)}
+.card{
+ background:var(--card);padding:20px;
+ border:1px solid #30251e;border-radius:14px;
+ margin-bottom:18px;
+}
+input,textarea,select{
+ width:100%;padding:14px;margin:8px 0;
+ border:1px solid #383838;background:#101010;
+ border-radius:8px;color:white;font-size:15px;
+ outline:none;
+}
+input:focus,textarea:focus{border-color:var(--orange)}
+textarea{min-height:140px;resize:vertical}
+button{
+ cursor:pointer;border:0;padding:12px 17px;
+ border-radius:8px;font-weight:bold;
+}
+.primary{
+ background:linear-gradient(90deg,#ff5200,#ff9700);
+ color:white;
+}
+.secondary{background:#292929;color:white}
+.danger{background:#461818;color:#ff8888}
+.full{width:100%;margin-top:10px}
+.grid{
+ display:grid;grid-template-columns:repeat(2,1fr);gap:14px;
+}
+.quick{
+ padding:25px 10px;text-align:center;
+ background:#171717;border:1px solid #34251b;
+ border-radius:13px;color:white;cursor:pointer;
+}
+.quick:hover{border-color:var(--orange)}
+.quick span{display:block;font-size:30px;margin-bottom:10px}
+.note{
+ background:#191919;padding:18px;border-radius:12px;
+ border:1px solid #383027;margin:12px 0;
+}
+.note h3{color:var(--gold);margin-bottom:9px;overflow-wrap:anywhere}
+.note p{
+ color:#ccc;line-height:1.6;white-space:pre-wrap;
+ overflow-wrap:anywhere;
+}
+.note small{display:block;color:#888;margin-top:12px}
+.actions{display:flex;gap:8px;margin-top:13px}
+.actions button{flex:1;font-size:12px}
+.empty{text-align:center;padding:30px;color:#888}
+.info{
+ margin-top:15px;padding:14px;background:#21150e;
+ border-radius:9px;color:#ffb36a;font-size:13px;line-height:1.6;
+}
+.bottom{
+ position:fixed;bottom:0;left:0;width:100%;
+ background:#111;border-top:1px solid #38251a;
+ display:flex;justify-content:space-around;
+ padding:10px 4px calc(10px + env(safe-area-inset-bottom));
+ z-index:20;
+}
+.nav{
+ background:transparent;color:#999;font-size:11px;
+ padding:7px 10px;display:flex;flex-direction:column;
+ align-items:center;gap:5px;
+}
+.nav span{font-size:20px}
+.nav.active{color:var(--orange)}
+footer{text-align:center;padding:25px 10px;color:#777;font-size:12px;line-height:2}
+footer strong{color:var(--orange)}
+@media(min-width:700px){
+ .hero{padding:60px}
+ .hero h1{font-size:60px}
+ .grid{grid-template-columns:repeat(4,1fr)}
+ .bottom{
+  max-width:600px;left:50%;transform:translateX(-50%);
+  border:1px solid #38251a;border-radius:15px 15px 0 0;
+ }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+ <div class="logo">🔥 FIRE BOX</div>
+ <div class="tag">EXPLORE • LEARN • DISCOVER</div>
+</header>
+
+<main>
+
+<!-- HOME -->
+<section class="page active" id="home">
+ <div class="hero">
+  <h1>FIRE BOX</h1>
+  <p>Your space to search the web and save your important notes.</p>
+ </div>
+
+ <h2 class="heading">Explore <span>Tools</span></h2>
+
+ <div class="grid">
+  <div class="quick" onclick="showPage('search')">
+   <span>🔎</span>Web Search
+  </div>
+  <div class="quick" onclick="showPage('notes')">
+   <span>📝</span>My Notes
+  </div>
+  <div class="quick" onclick="newNote()">
+   <span>✍️</span>Create Note
+  </div>
+  <div class="quick" onclick="showPage('about')">
+   <span>🔥</span>About
+  </div>
+ </div>
+
+ <h2 class="heading">Your <span>Workspace</span></h2>
+ <div class="card">
+  <h3>📌 Welcome to Fire Box</h3>
+  <p style="color:#aaa;line-height:1.8;margin-top:10px">
+   Search information online, create notes and keep
+   your important information organized.
+  </p>
+  <p style="margin-top:15px">
+   Saved notes: <strong id="homeCount" style="color:#ff7900">0</strong>
+  </p>
+ </div>
+</section>
+
+<!-- SEARCH -->
+<section class="page" id="search">
+ <h2 class="heading">Search the <span>Web</span></h2>
+ <div class="card">
+  <h3>🌐 Search Anything</h3>
+  <form id="searchForm">
+   <input id="webQuery" type="search"
+    placeholder="What do you want to search?" required>
+   <select id="engine">
+    <option value="google">Google</option>
+    <option value="bing">Bing</option>
+   </select>
+   <button class="primary full" type="submit">🔎 Search Now</button>
+  </form>
+  <div class="info">
+   Your search results will open inside the app.
+   Use your phone's Back button to return to Fire Box.
+  </div>
+ </div>
+</section>
+
+<!-- NOTES -->
+<section class="page" id="notes">
+ <h2 class="heading">My <span>Notes</span></h2>
+ <input type="search" id="noteSearch"
+  placeholder="Search your saved notes...">
+ <button class="primary full" onclick="newNote()">+ Create New Note</button>
+ <div id="notesList"></div>
+</section>
+
+<!-- CREATE NOTE -->
+<section class="page" id="add">
+ <h2 class="heading" id="formHeading">Create <span>Note</span></h2>
+ <div class="card">
+  <form id="noteForm">
+   <label for="noteTitle">Note Title</label>
+   <input id="noteTitle" maxlength="100"
+    placeholder="Enter note title" required>
+   <label for="noteContent">Note Content</label>
+   <textarea id="noteContent" maxlength="20000"
+    placeholder="Write your notes here..." required></textarea>
+   <button class="primary full" type="submit" id="saveBtn">
+    💾 Save Note
+   </button>
+   <button class="secondary full" type="button"
+    onclick="resetForm();showPage('notes')">Cancel</button>
+  </form>
+ </div>
+</section>
+
+<!-- ABOUT -->
+<section class="page" id="about">
+ <h2 class="heading">About <span>Fire Box</span></h2>
+ <div class="card" style="text-align:center;padding:35px 20px">
+  <div style="font-size:55px">🔥</div>
+  <h2 style="color:#ff7600;margin:15px">FIRE BOX</h2>
+  <p style="color:#aaa;line-height:1.8">
+   A simple platform to search the internet and save
+   your important notes.
+  </p>
+  <hr style="border:0;border-top:1px solid #393027;margin:25px 0">
+  <h3>Developer Information</h3>
+  <p style="color:#ffad55;margin:12px">PREETHAM NY</p>
+  <p style="color:#aaa">A startup program from Karnataka, India.</p>
+  <a href="https://instagram.com/preethu__888"
+   target="_blank" rel="noopener"
+   style="display:inline-block;margin-top:20px;color:#ff7900;text-decoration:none">
+   📸 @preethu__888
+  </a>
+ </div>
+</section>
+
+<footer>
+ <strong>🔥 FIRE BOX</strong>
+ <p>Explore. Learn. Discover.</p>
+ <p>Designed by Preetham NY</p>
+ <p>© 2026 Fire Box</p>
+</footer>
+
+</main>
+
+<nav class="bottom">
+ <button class="nav active" data-page="home" onclick="showPage('home')">
+  <span>🏠</span>Home
+ </button>
+ <button class="nav" data-page="search" onclick="showPage('search')">
+  <span>🔎</span>Search
+ </button>
+ <button class="nav" data-page="notes" onclick="showPage('notes')">
+  <span>📝</span>Notes
+ </button>
+ <button class="nav" data-page="about" onclick="showPage('about')">
+  <span>👤</span>About
+ </button>
+</nav>
+
+<script>
+const STORAGE_KEY = "firebox_notes_v1";
+
+let notes = [];
+let editingId = null;
+
+// LOAD SAVED NOTES
+try {
+ const saved = localStorage.getItem(STORAGE_KEY);
+ notes = saved ? JSON.parse(saved) : [];
+ if (!Array.isArray(notes)) notes = [];
+} catch(error) {
+ notes = [];
+}
+
+// PAGE NAVIGATION
+function showPage(page) {
+ document.querySelectorAll(".page").forEach(p =>
+  p.classList.remove("active")
+ );
+
+ document.getElementById(page).classList.add("active");
+
+ document.querySelectorAll(".nav").forEach(btn =>
+  btn.classList.toggle("active", btn.dataset.page === page)
+ );
+
+ if (page === "notes") renderNotes();
+ updateCount();
+ window.scrollTo(0,0);
+}
+
+// SEARCH THE WEB
+document.getElementById("searchForm").addEventListener("submit", e => {
+ e.preventDefault();
+
+ const query = document.getElementById("webQuery").value.trim();
+ const engine = document.getElementById("engine").value;
+
+ if (!query) return;
+
+ const urls = {
+  google: "https://www.google.com/search?q=",
+  bing: "https://www.bing.com/search?q="
+ };
+
+ // Open results in the current WebView
+ window.location.href = urls[engine] + encodeURIComponent(query);
+});
+
+// SAVE NOTES
+function saveData() {
+ try {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+  updateCount();
+  return true;
+ } catch(error) {
+  alert("Could not save notes. Check your storage settings.");
+  return false;
+ }
+}
+
+function updateCount() {
+ const count = document.getElementById("homeCount");
+ if (count) count.textContent = notes.length;
+}
+
+// CREATE NEW NOTE
+function newNote() {
+ resetForm();
+ showPage("add");
+}
+
+// RESET NOTE FORM
+function resetForm() {
+ editingId = null;
+ document.getElementById("noteForm").reset();
+ document.getElementById("formHeading").innerHTML =
+  'Create <span>Note</span>';
+ document.getElementById("saveBtn").textContent = "💾 Save Note";
+}
+
+// SAVE OR UPDATE
+document.getElementById("noteForm").addEventListener("submit", e => {
+ e.preventDefault();
+
+ const title = document.getElementById("noteTitle").value.trim();
+ const content = document.getElementById("noteContent").value.trim();
+
+ if (!title || !content) {
+  alert("Please enter the title and content.");
+  return;
+ }
+
+ const oldNote = editingId
+  ? notes.find(n => n.id === editingId)
+  : null;
+
+ if (editingId && !oldNote) {
+  alert("Note not found.");
+  resetForm();
+  showPage("notes");
+  return;
+ }
+
+ const now = new Date().toISOString();
+
+ if (editingId) {
+  notes = notes.map(n => n.id === editingId
+   ? {...n, title, content, updated:now}
+   : n
+  );
+ } else {
+  notes.unshift({
+   id: Date.now().toString() + Math.random().toString(36).slice(2),
+   title,
+   content,
+   date: now,
+   updated: now
+  });
+ }
+
+ if (saveData()) {
+  resetForm();
+  showPage("notes");
+  alert(editingId ? "Note updated!" : "Note saved!");
+ }
+});
+
+// SAFE TEXT DISPLAY
+function makeText(tag, text, className) {
+ const el = document.createElement(tag);
+ el.textContent = text;
+ if (className) el.className = className;
+ return el;
+}
+
+// DISPLAY NOTES
+function renderNotes() {
+ const list = document.getElementById("notesList");
+ const query = document.getElementById("noteSearch").value
+  .trim().toLowerCase();
+
+ list.replaceChildren();
+
+ const filtered = notes.filter(n =>
+  n.title.toLowerCase().includes(query) ||
+  n.content.toLowerCase().includes(query)
+ );
+
+ if (filtered.length === 0) {
+  list.appendChild(makeText("div",
+   notes.length ? "No matching notes found." : "📝 No notes saved yet.",
+   "empty"
+  ));
+  return;
+ }
+
+ filtered.forEach(note => {
+  const box = makeText("div", "", "note");
+  const title = makeText("h3", note.title);
+  const content = makeText("p", note.content);
+  const date = makeText("small",
+   "Last saved: " + new Date(note.updated || note.date).toLocaleString()
+  );
+
+  const actions = makeText("div", "", "actions");
+
+  const edit = makeText("button", "✏️ Edit", "secondary");
+  edit.type = "button";
+  edit.addEventListener("click", () => editNote(note.id));
+
+  const del = makeText("button", "🗑 Delete", "danger");
+  del.type = "button";
+  del.addEventListener("click", () => deleteNote(note.id));
+
+  actions.append(edit, del);
+  box.append(title, content, date, actions);
+  list.appendChild(box);
+ });
+}
+
+// EDIT NOTE
+function editNote(id) {
+ const note = notes.find(n => n.id === id);
+ if (!note) return;
+
+ editingId = id;
+ document.getElementById("noteTitle").value = note.title;
+ document.getElementById("noteContent").value = note.content;
+
+ document.getElementById("formHeading").innerHTML =
+  'Edit <span>Note</span>';
+ document.getElementById("saveBtn").textContent = "💾 Update Note";
+
+ showPage("add");
+}
+
+// DELETE NOTE
+function deleteNote(id) {
+ if (!confirm("Are you sure you want to delete this note?")) return;
+
+ const oldNotes = notes;
+ notes = notes.filter(n => n.id !== id);
+
+ if (saveData()) {
+  renderNotes();
+ } else {
+  notes = oldNotes;
+ }
+}
+
+// SEARCH NOTES
+document.getElementById("noteSearch")
+.addEventListener("input", renderNotes);
+
+// INITIAL DISPLAY
+updateCount();
+renderNotes();
+</script>
+
+</body>
+</html>
